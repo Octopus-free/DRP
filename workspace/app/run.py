@@ -38,9 +38,6 @@ category_counts = []
 for category in category_names:
     category_counts.append(sum(df[category] == 1))
 
-print(len(category_names), len(category_counts))
-
-
 
 # index webpage displays cool visuals and receives user input text for model
 @app.route('/')
