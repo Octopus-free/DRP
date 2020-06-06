@@ -88,7 +88,7 @@ def build_model():
     """
 
     # model pipeline
-    model = Pipeline([
+    pipeline = Pipeline([
         ('features', FeatureUnion([
             ('text_pipeline', Pipeline([
                 ('vect', CountVectorizer(tokenizer=tokenize, ngram_range=(1, 2))),
@@ -98,10 +98,19 @@ def build_model():
         ])),
 
         ('clf', MultiOutputClassifier(RandomForestClassifier(n_estimators=100, class_weight='balanced',
-                                                             n_jobs=1, random_state=42)))
+                                                             n_jobs=-1, random_state=42)))
     ])
+    
+    parameters = {
+    'features__text_pipeline__vect__max_features': (None, 5000, 10000),
+    'features__text_pipeline__vect__max_df': (0.5, 0.75, 1.0),
+    'features__text_pipeline__vect__ngram_range': ((1, 1), (1, 2)),
+    'features__text_pipeline__tfidf__use_idf': (True, False)
+              }
 
-    return model
+    cv = GridSearchCV(pipeline, param_grid=parameters)
+
+    return cv
 
 
 def evaluate_model(model, X_test, Y_test, category_names):
